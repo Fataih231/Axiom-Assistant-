@@ -7,7 +7,16 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="chat-container">
+    <!-- Sayfa Sekmeleri -->
+    <div class="tabs">
+        <button class="tab" onclick="showPage('home')">Ana Sayfa</button>
+        <button class="tab" onclick="showPage('time')">Saat & Tarih</button>
+        <button class="tab" onclick="showPage('game')">Oyun</button>
+        <button class="tab" onclick="showPage('suggestions')">Öneriler</button>
+    </div>
+
+    <!-- Ana Sayfa İçeriği -->
+    <div class="page" id="home">
         <div class="chat-box" id="chatBox">
             <p><strong>Axiom Asistanı:</strong> Merhaba! Size nasıl yardımcı olabilirim?</p>
         </div>
@@ -15,6 +24,26 @@
             <input type="text" id="userInput" placeholder="Bir şeyler yazın...">
             <button onclick="sendMessage()">Gönder</button>
         </div>
+    </div>
+
+    <!-- Saat ve Tarih Sayfası -->
+    <div class="page" id="time" style="display:none;">
+        <h3>Tarih ve Saat</h3>
+        <p id="dateTime"></p>
+    </div>
+
+    <!-- Oyun Sayfası -->
+    <div class="page" id="game" style="display:none;">
+        <h3>Oyun</h3>
+        <p>Sayı tahmin oyununa başlamak için 1-100 arasında bir sayı düşün ve yaz!</p>
+    </div>
+
+    <!-- Öneriler Sayfası -->
+    <div class="page" id="suggestions" style="display:none;">
+        <h3>Öneriler</h3>
+        <button onclick="showMovieSuggestion()">Film Önerisi</button>
+        <button onclick="showMusicSuggestion()">Müzik Önerisi</button>
+        <p id="suggestionResult"></p>
     </div>
 
     <script src="script.js"></script>
