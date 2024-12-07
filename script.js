@@ -1,55 +1,36 @@
-// Sayfa geçiş fonksiyonu
-function showPage(pageId) {
-    let pages = document.querySelectorAll('.page');
-    pages.forEach(page => page.style.display = 'none');
-    document.getElementById(pageId).style.display = 'block';
-}
-
-// Saat ve Tarih gösterimi
-function updateDateTime() {
-    let date = new Date();
-    document.getElementById('dateTime').textContent = `Bugün: ${date.toLocaleDateString()} - Saat: ${date.toLocaleTimeString()}`;
-}
-
-// Film önerisi
-function showMovieSuggestion() {
-    const movieSuggestions = [
-        "The Matrix",
-        "Inception",
-        "Interstellar",
-        "The Dark Knight",
-        "Shawshank Redemption"
-    ];
-    const randomMovie = movieSuggestions[Math.floor(Math.random() * movieSuggestions.length)];
-    document.getElementById('suggestionResult').textContent = `Film Önerisi: ${randomMovie}`;
-}
-
-// Müzik önerisi
-function showMusicSuggestion() {
-    const musicSuggestions = [
-        "Bohemian Rhapsody - Queen",
-        "Shape of You - Ed Sheeran",
-        "Blinding Lights - The Weeknd",
-        "Happier - Marshmello feat. Bastille",
-        "Levitating - Dua Lipa"
-    ];
-    const randomMusic = musicSuggestions[Math.floor(Math.random() * musicSuggestions.length)];
-    document.getElementById('suggestionResult').textContent = `Müzik Önerisi: ${randomMusic}`;
-}
-
-// Sayı tahmin oyunu
-let secretNumber = Math.floor(Math.random() * 100) + 1;
-let attempts = 0;
-
-function guessNumber() {
-    const userGuess = parseInt(document.getElementById('userInput').value);
-    attempts++;
-    if (userGuess === secretNumber) {
-        alert(`Tebrikler! ${attempts} denemede doğru sayıyı bildiniz.`);
-    } else if (userGuess < secretNumber) {
-        alert('Tahmininiz çok düşük. Tekrar deneyin!');
-    } else {
-        alert('Tahmininiz çok yüksek. Tekrar deneyin!');
+async function sendMessage() {
+    let userInput = document.getElementById('userInput').value;
+    let chatBox = document.getElementById('chatBox');
+    
+    if(userInput.trim() !== '') {
+        let userMessage = document.createElement('p');
+        userMessage.textContent = "Sen: " + userInput;
+        chatBox.appendChild(userMessage);
+        
+        // OpenAI API'ye bağlanma
+        let botMessage = document.createElement('p');
+        botMessage.textContent = "Axiom Asistanı: " + await getAIResponse(userInput);
+        chatBox.appendChild(botMessage);
+        
+        document.getElementById('userInput').value = ''; // Input kutusunu temizle
+        chatBox.scrollTop = chatBox.scrollHeight; // Chatbox'ı en alta kaydır
     }
-    document.getElementById('userInput').value = ''; // Input kutusunu temizle
+}
+
+async function getAIResponse(input) {
+    const response = await fetch('https://api.openai.com/v1/completions', {
+        method: 'POST',
+        headers: {
+            'Authorization': 'Bearer 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',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            model: 'text-davinci-003',  // Ya da kullanmak istediğiniz model
+            prompt: input,
+            max_tokens: 150
+        })
+    });
+
+    const data = await response.json();
+    return data.choices[0].text.trim();
 }
