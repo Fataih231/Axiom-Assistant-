@@ -3,21 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Axiom Asistanı</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Axiom Asistan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #chatContainer {
+            width: 100%;
+            max-width: 600px;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            height: 70vh;
+        }
+
+        #chatBox {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .userMessage, .botMessage {
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+
+        .userMessage {
+            background-color: #d1e7ff;
+            align-self: flex-end;
+        }
+
+        .botMessage {
+            background-color: #f1f1f1;
+            align-self: flex-start;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
-    <!-- Chatbot Penceresi -->
-    <div class="chat-container">
-        <div class="chat-box" id="chatBox">
-            <p><strong>Axiom Asistanı:</strong> Merhaba! Ben Axiom Asistanıyım. Yardımcı olabileceğim komutları görmek için 'yardım' yazabilirsiniz.</p>
-        </div>
-        <div class="input-box">
-            <input type="text" id="userInput" placeholder="Bir şeyler yazın...">
-            <button onclick="sendMessage()">Gönder</button>
-        </div>
+
+    <h1>Axiom Asistan</h1>
+
+    <div id="chatContainer">
+        <div id="chatBox"></div>
     </div>
 
-    <script src="script.js"></script>
-</body>
-</html>
+    <input type="text" id="userInput" placeholder="Mesajınızı yazın..." />
+    <button onclick="sendMessage()">Gönder</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/3.6.2/fetch.min.js"></script>
+    <script>
+        const apiKey = "YOUR_API_KEY"; // Buraya OpenAI API anahtarınızı ekleyin
+
+        // Chatbot'a mesaj gönderme fonksiyonu
+        async function getAIResponse(input) {
+            const apiUrl = "https://api.openai.com/v1/completions"; // OpenAI API URL'si
+
+            const data = {
+                model: "text-davinci-003",  // Modeli ihtiyaca göre değiştirebilirsiniz
+                prompt: input,
+                max_tokens: 150,
+                temperature: 0.7
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error('API istek hatası: ' + response.statusText);
+                }
+
+                const result = await response.json();
+                return result.choices[0].text.trim();  // Modelin verdiği yanıtı döndürür
+            } catch (error) {
+                console.error('Hata:', error);
+                return 'Bir hata oluştu, lütfen tekrar deneyin.';
+            }
+        }
+
+        // Kullanıcının mesajını chatbox'a ekler
+        function addMessageToChat(message, sender) {
+            const chatBox = document.getElementById("chatBox");
+            const messageElement = document.createElement("div");
+            messageElement.classList.add(sender === 'user' ? "userMessage" : "botMessage");
+            messageElement.textContent = message;
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight;  // En son mesaja kaydırma
+        }
+
+        // Gönder butonuna basıldığında çalışacak fonksiyon
+        async function sendMessage() {
+            const userInput = document.getElementById("userInput").value.trim();
+            if (userInput === "") return;
+
+            addMessageToChat(userInput, 'user');  // Kullanıcının mesajını ekle
+
+            document.getElementById("userInput").value = "";  // Input kutusunu temizle
+
+          
