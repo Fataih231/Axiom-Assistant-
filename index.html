@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Axiom Asistan</title>
-    <link rel="stylesheet" href="style.css">  <!-- CSS dosyasını ekliyoruz -->
+    <title>Axiom Asistanı</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-    <h1>Axiom Asistan</h1>
-
-    <div id="chatContainer">
-        <div id="chatBox"></div>
+    <div class="chat-container">
+        <div class="chat-box" id="chatBox">
+            <p><strong>Axiom Asistanı:</strong> Merhaba! Size nasıl yardımcı olabilirim?</p>
+        </div>
+        <div class="input-box">
+            <input type="text" id="userInput" placeholder="Bir şeyler yazın...">
+            <button onclick="sendMessage()">Gönder</button>
+        </div>
     </div>
 
-    <input type="text" id="userInput" placeholder="Mesajınızı yazın..." />
-    <button onclick="sendMessage()">Gönder</button>
-
-    <script src="script.js"></script>  <!-- JavaScript dosyasını ekliyoruz -->
+    <script src="script.js"></script>
 </body>
 </html>
